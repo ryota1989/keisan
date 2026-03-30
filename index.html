@@ -252,7 +252,6 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="text-xs text-right text-gray-500 mt-3">※表の「合計インセンティブ」は、基本歩合と達成ボーナスを合算した実際の受取額です。</p>
             </div>
         </div>
 
@@ -273,13 +272,13 @@
                         <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 relative overflow-hidden">
                             <div class="absolute top-0 right-0 bg-slate-200 text-slate-600 text-xs font-bold px-2 py-1 rounded-bl-lg">確約報酬</div>
                             <div class="text-sm text-slate-500 font-bold mb-1 mt-2">日給制</div>
-                            <div class="text-3xl font-black text-slate-800">1.3<span class="text-lg font-bold ml-1">万円</span></div>
+                            <div class="text-3xl font-black text-slate-800"><span id="editable-daily-wage" class="editable-rate" contenteditable="true">1.3</span><span class="text-lg font-bold ml-1">万円</span></div>
                             <div class="text-xs text-slate-500 mt-1">＋ 交通費支給</div>
                         </div>
                         <div class="bg-blue-50 rounded-xl p-5 border border-blue-100 relative overflow-hidden">
                             <div class="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-2 py-1 rounded-bl-lg">歩合</div>
                             <div class="text-sm text-blue-700 font-bold mb-1 mt-2">一律インセンティブ</div>
-                            <div class="text-3xl font-black text-primary">5<span class="text-lg font-bold ml-1">%</span></div>
+                            <div class="text-3xl font-black text-primary"><span id="global-freelance-rate" class="editable-rate" contenteditable="true">5</span><span class="text-lg font-bold ml-1">%</span></div>
                         </div>
                     </div>
                 </div>
@@ -330,7 +329,7 @@
 
                     <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 text-center relative shadow-md w-full md:w-auto">
                         <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">この額の</div>
-                        <div class="text-4xl font-black text-primary mt-2">5<span class="text-xl">%</span></div>
+                        <div class="text-4xl font-black text-primary mt-2"><span id="display-global-freelance-rate">5</span><span class="text-xl">%</span></div>
                         <div class="text-sm font-bold text-blue-800 mt-1">がインセンティブ！</div>
                     </div>
                 </div>
@@ -427,6 +426,7 @@
         };
 
         let currentMaxCap = 180;
+        let currentDailyWage = 1.3;
 
         // --- 従業員タブの描画 ---
         function renderEmployeeTable() {
@@ -549,15 +549,15 @@
             if (exampleIncentive < 0) exampleIncentive = 0;
             exampleIncentive = Math.round(exampleIncentive * 100) / 100;
             
-            let dailyWageTotal = days * 1.3;
-            dailyWageTotal = Math.round(dailyWageTotal * 10) / 10;
+            let dailyWageTotal = days * currentDailyWage;
+            dailyWageTotal = Math.round(dailyWageTotal * 100) / 100;
             let exampleGrandTotal = dailyWageTotal + exampleIncentive;
             exampleGrandTotal = Math.round(exampleGrandTotal * 100) / 100;
             
             document.getElementById('example-rate').textContent = rate300;
             document.getElementById('example-incentive').textContent = exampleIncentive + '万円';
             document.getElementById('example-incentive-total').textContent = exampleIncentive + '万';
-            document.getElementById('example-daily-total').textContent = `日給${dailyWageTotal}万円(1.3万×${days}日)`;
+            document.getElementById('example-daily-total').textContent = `日給${dailyWageTotal}万円(${currentDailyWage}万×${days}日)`;
             document.getElementById('example-grand-total').textContent = exampleGrandTotal;
 
             // 表の更新
@@ -599,8 +599,8 @@
             if (isNaN(days) || days < 0) days = 0;
             const baseAmount = Math.min(days * 10, currentMaxCap);
             
-            let dailyWageTotal = days * 1.3;
-            dailyWageTotal = Math.round(dailyWageTotal * 10) / 10;
+            let dailyWageTotal = days * currentDailyWage;
+            dailyWageTotal = Math.round(dailyWageTotal * 100) / 100;
             
             let rate = freelanceRates[profit] || 0;
             let incentive = (profit - baseAmount) * (rate / 100);
@@ -655,6 +655,31 @@
                 document.getElementById('display-cap-msg').textContent = currentMaxCap;
                 
                 updateFreelanceCalc();
+            } else if (e.target.id === 'editable-daily-wage') {
+                let text = e.target.textContent;
+                let val = parseFloat(text);
+                if (isNaN(val)) val = 0;
+                currentDailyWage = val;
+                
+                updateFreelanceCalc();
+            } else if (e.target.id === 'global-freelance-rate') {
+                // サマリーカードの一律インセンティブが変更された場合
+                let text = e.target.textContent;
+                let val = parseFloat(text);
+                if (isNaN(val)) val = 0;
+                
+                // 全ての歩合率を一括更新
+                for (let key in freelanceRates) {
+                    freelanceRates[key] = val;
+                }
+                
+                // 図解の%表示も更新
+                const displayGlobalRate = document.getElementById('display-global-freelance-rate');
+                if (displayGlobalRate) {
+                    displayGlobalRate.textContent = val;
+                }
+
+                updateFreelanceCalc(); // 全体を再描画
             } else if (e.target.classList.contains('editable-rate')) {
                 let text = e.target.textContent;
                 let val = parseFloat(text);
