@@ -539,7 +539,8 @@
             document.getElementById('display-work-days').textContent = days;
             
             const displayRawBase = document.getElementById('display-raw-base');
-            if(displayRawBase) displayRawBase.textContent = rawBaseAmount;
+            // 上限額(baseAmount)を反映させる
+            if(displayRawBase) displayRawBase.textContent = baseAmount;
 
             const capAlert = document.getElementById('cap-alert');
             const capNote = document.getElementById('cap-note');
