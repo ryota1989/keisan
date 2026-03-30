@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>催事買取業 報酬システムのご案内</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        const initTailwind = setInterval(() => {
+            if (typeof tailwind !== 'undefined') {
+                clearInterval(initTailwind);
+                tailwind.config = {
+                    theme: {
+                        extend: {
+                            colors: {
+                                primary: '#2563eb', // 業務委託ブルー
+                                secondary: '#059669', // 従業員グリーン
+                                accent: '#f59e0b', // ボーナスゴールド
+                            },
+                            animation: {
+                                'fade-in': 'fadeIn 0.4s ease-out forwards',
+                                'bounce-slight': 'bounceSlight 2s infinite',
+                            },
+                            keyframes: {
+                                fadeIn: {
+                                    '0%': { opacity: '0', transform: 'translateY(10px)' },
+                                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                                },
+                                bounceSlight: {
+                                    '0%, 100%': { transform: 'translateY(-5%)' },
+                                    '50%': { transform: 'translateY(0)' },
+                                }
+                            }
+                        }
+                    }
+                };
+            }
+        }, 10);
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        .table-container {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .data-table th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: #475569;
+            text-align: center;
+            padding: 1rem 0.75rem;
+            white-space: nowrap;
+        }
+        .data-table td {
+            text-align: center;
+            padding: 1rem 0.75rem;
+            border-top: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            transition: background-color 0.2s;
+        }
+        .data-table tr:hover td {
+            background-color: #f8fafc;
+        }
+        .highlight-cell {
+            font-weight: 900;
+            font-size: 1.125rem;
+        }
+        
+        /* 編集可能な％部分のスタイル */
+        .editable-rate {
+            outline: none;
+            cursor: default;
+            display: inline-block;
+            min-width: 1.5rem;
+        }
+        .editable-rate:focus {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: 4px;
+        }
+
+        /* カスタムスクロールバー */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="antialiased pb-20">
+
+    <!-- ヘッダー -->
+    <header class="bg-slate-900 text-white pt-12 pb-16 px-4 text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+        <div class="relative z-10 max-w-4xl mx-auto">
+            <span class="inline-block py-1 px-3 rounded-full bg-slate-800 border border-slate-700 text-sm font-bold text-slate-300 mb-4 tracking-wider">REWARD SYSTEM</span>
+            <h1 class="text-3xl md:text-5xl font-black mb-4 leading-tight">
+                あなたに合った働き方を選べる<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">圧倒的・報酬システム</span>
+            </h1>
+            <p class="text-slate-300 text-lg md:text-xl font-medium">
+                頑張りがダイレクトに収入へ！選べる2つのワークスタイル。
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 -mt-8 relative z-20">
+        
+        <!-- タブ切り替えボタン -->
+        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-center mb-10">
+            <button id="btn-employee" onclick="switchTab('employee')" class="flex-1 bg-secondary text-white shadow-xl py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1">
+                <i class="fas fa-user-tie mr-3 text-2xl"></i>
+                従業員（アポインター）
+            </button>
+            <button id="btn-freelance" onclick="switchTab('freelance')" class="flex-1 bg-white text-slate-500 shadow-md border border-slate-200 py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center transition-all duration-300 hover:bg-slate-50">
+                <i class="fas fa-briefcase mr-3 text-2xl"></i>
+                業務委託（外注）
+            </button>
+        </div>
+
+        <!-- ==========================================
+             従業員タブ
+             ========================================== -->
+        <div id="tab-employee" class="animate-fade-in block">
+            
+            <!-- サマリーカード -->
+            <div class="bg-white rounded-2xl shadow-lg border-t-4 border-secondary p-6 md:p-10 mb-8">
+                <div class="flex flex-col md:flex-row gap-8 items-center">
+                    <div class="md:w-1/3 text-center md:text-left">
+                        <h2 class="text-2xl font-black text-gray-800 mb-2">従業員スタイル</h2>
+                        <p class="text-gray-500 font-medium mb-4">安定の固定給＋爆発力のボーナス！</p>
+                        <div class="inline-block bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-lg font-bold">
+                            社会保険など完備
+                        </div>
+                    </div>
+                    <div class="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                        <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-slate-200 text-slate-600 text-xs font-bold px-2 py-1 rounded-bl-lg">基本給</div>
+                            <div class="text-sm text-slate-500 font-bold mb-1 mt-2">月額ベース</div>
+                            <div class="text-3xl font-black text-slate-800">25<span class="text-lg font-bold ml-1">万円〜</span></div>
+                        </div>
+                        <div class="bg-green-50 rounded-xl p-5 border border-green-100 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-secondary text-white text-xs font-bold px-2 py-1 rounded-bl-lg">歩合</div>
+                            <div class="text-sm text-green-700 font-bold mb-1 mt-2">インセンティブ歩合率</div>
+                            <div class="text-3xl font-black text-secondary">10<span class="text-lg font-bold ml-1">%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- インセンティブの仕組み図解 -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-10 mb-8">
+                <h3 class="text-xl font-black text-center mb-8 text-gray-800 border-b-2 border-gray-100 pb-4">
+                    <i class="fas fa-chart-line text-secondary mr-2"></i>
+                    インセンティブ計算の仕組み
+                </h3>
+
+                <div class="bg-amber-50 rounded-xl p-6 border border-amber-200 mb-8 text-center">
+                    <p class="text-lg font-bold text-amber-800 mb-2">総インセンティブ ＝ 「達成ボーナス」 ＋ 「基本歩合（10%）」</p>
+                    <p class="text-sm text-amber-700">粗利が伸びるほど、ダブルで報酬が跳ね上がる仕組みです！</p>
+                </div>
+
+                <!-- ステップ図解 -->
+                <div class="flex flex-col md:flex-row gap-4 items-stretch justify-center relative z-10">
+                    
+                    <div class="bg-white border-2 border-slate-200 rounded-xl p-5 flex-1 text-center relative shadow-sm">
+                        <div class="text-xs font-black text-slate-400 mb-2 tracking-widest">STEP 1</div>
+                        <div class="text-lg font-bold text-gray-700 mb-3">粗利 <span class="text-2xl text-gray-900">180</span>万円 超え</div>
+                        <div class="bg-slate-50 py-3 rounded-lg">
+                            <div class="text-xs text-slate-500 font-bold mb-1">達成ボーナス発生！</div>
+                            <div class="text-2xl font-black text-accent"><i class="fas fa-plus text-sm mr-1"></i>3万円</div>
+                        </div>
+                        <div class="hidden md:block absolute top-1/2 -right-6 transform -translate-y-1/2 text-slate-300 text-3xl z-20"><i class="fas fa-angle-double-right"></i></div>
+                        <div class="block md:hidden text-slate-300 text-3xl mt-3"><i class="fas fa-angle-double-down"></i></div>
+                    </div>
+
+                    <div class="bg-white border-2 border-secondary rounded-xl p-5 flex-1 text-center relative shadow-md transform md:-translate-y-2">
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-secondary text-white text-xs font-bold px-3 py-1 rounded-full">さらに！</div>
+                        <div class="text-xs font-black text-secondary mb-2 tracking-widest mt-2">STEP 2</div>
+                        <div class="text-lg font-bold text-gray-700 mb-3">粗利 <span class="text-2xl text-gray-900">200</span>万円 超え</div>
+                        <div class="bg-green-50 py-3 rounded-lg border border-green-100">
+                            <div class="text-xs text-green-700 font-bold mb-1">ボーナスがグレードアップ！</div>
+                            <div class="text-2xl font-black text-accent"><i class="fas fa-plus text-sm mr-1"></i>7万円</div>
+                        </div>
+                        <div class="hidden md:block absolute top-1/2 -right-6 transform -translate-y-1/2 text-secondary text-3xl z-20 opacity-50"><i class="fas fa-angle-double-right"></i></div>
+                        <div class="block md:hidden text-secondary text-3xl mt-3 opacity-50"><i class="fas fa-angle-double-down"></i></div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-secondary to-emerald-500 rounded-xl p-5 flex-1 text-center text-white shadow-lg transform md:-translate-y-4 flex flex-col justify-center">
+                        <div class="text-xs font-black text-emerald-100 mb-2 tracking-widest">STEP 3</div>
+                        <div class="text-lg font-bold mb-2">青天井の歩合報酬</div>
+                        <p class="text-xs text-emerald-100 mb-3">(粗利 － 180万円) の</p>
+                        <div class="text-4xl font-black text-white mb-1"><span class="text-xl">常に</span> 10%</div>
+                        <p class="text-xs font-medium bg-white/20 py-1 px-2 rounded-lg inline-block mx-auto">が無限に加算！</p>
+                    </div>
+                </div>
+
+                <!-- 計算例 -->
+                <div class="mt-8 bg-slate-800 text-white rounded-xl p-5 flex items-center shadow-inner">
+                    <div class="bg-slate-700 p-3 rounded-full mr-4 shrink-0">
+                        <i class="fas fa-calculator text-emerald-400 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold mb-1">【計算例】 月間粗利300万円の場合</p>
+                        <p class="text-sm font-medium leading-relaxed">
+                            200万達成ボーナス <span class="text-accent font-bold">10万円</span> (※3万+7万)<br class="md:hidden">
+                            ＋ (300万 - 180万) × <span id="emp-example-rate">10</span>% = <span class="text-emerald-400 font-bold"><span id="emp-example-inc">12</span>万円</span><br>
+                            👉 <span class="text-white font-bold">合計 <span class="text-xl text-accent"><span id="emp-example-total">22</span>万円</span> のインセンティブを獲得！</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- データテーブル -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-10">
+                <h3 class="text-xl font-black text-center mb-6 text-gray-800">
+                    <i class="fas fa-table text-slate-400 mr-2"></i>
+                    報酬シミュレーション早見表
+                </h3>
+                <div class="table-container overflow-x-auto">
+                    <table class="w-full data-table">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">月間粗利<br><span class="text-xs text-slate-400 font-normal">（万円）</span></th>
+                                <th class="w-1/4 bg-green-50 text-green-800">合計インセンティブ<br><span class="text-xs text-green-600 font-normal">（万円）</span></th>
+                                <th class="w-1/4">歩合率</th>
+                                <th class="w-1/4 text-accent">達成ボーナス</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employee-table-body">
+                            <!-- JSで動的に生成されます -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-right text-gray-500 mt-3">※表の「合計インセンティブ」は、基本歩合と達成ボーナスを合算した実際の受取額です。<br>※「歩合率」の数字をタップすると、シミュレーション用に数値を変更できます。</p>
+            </div>
+        </div>
+
+
+        <!-- ==========================================
+             業務委託タブ
+             ========================================== -->
+        <div id="tab-freelance" class="hidden animate-fade-in">
+            
+            <!-- サマリーカード -->
+            <div class="bg-white rounded-2xl shadow-lg border-t-4 border-primary p-6 md:p-10 mb-8">
+                <div class="flex flex-col md:flex-row gap-8 items-center">
+                    <div class="md:w-1/3 text-center md:text-left">
+                        <h2 class="text-2xl font-black text-gray-800 mb-2">業務委託スタイル</h2>
+                        <p class="text-gray-500 font-medium mb-4">稼働した分だけ日給確約！<br>自由なペースで働ける。</p>
+                    </div>
+                    <div class="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                        <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-slate-200 text-slate-600 text-xs font-bold px-2 py-1 rounded-bl-lg">確約報酬</div>
+                            <div class="text-sm text-slate-500 font-bold mb-1 mt-2">日給制</div>
+                            <div class="text-3xl font-black text-slate-800">1.3<span class="text-lg font-bold ml-1">万円</span></div>
+                            <div class="text-xs text-slate-500 mt-1">＋ 交通費支給</div>
+                        </div>
+                        <div class="bg-blue-50 rounded-xl p-5 border border-blue-100 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-2 py-1 rounded-bl-lg">歩合</div>
+                            <div class="text-sm text-blue-700 font-bold mb-1 mt-2">一律インセンティブ</div>
+                            <div class="text-3xl font-black text-primary">5<span class="text-lg font-bold ml-1">%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 稼働日数入力エリア -->
+            <div class="bg-blue-50 rounded-2xl p-6 md:p-8 mb-8 border border-blue-100 flex flex-col md:flex-row items-center justify-between shadow-md relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 text-blue-200 opacity-30 text-9xl">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="mb-6 md:mb-0 relative z-10 text-center md:text-left">
+                    <h3 class="text-xl font-black text-blue-900 mb-2">シミュレーション設定</h3>
+                    <p class="text-sm text-blue-700 font-medium">稼働予定日数を入力すると、下の計算式と表が自動で再計算されます。</p>
+                </div>
+                <div class="relative z-10 flex items-center bg-white rounded-xl p-3 shadow-sm border-2 border-primary focus-within:ring-4 focus-within:ring-blue-100 transition-all">
+                    <label for="work-days" class="text-sm font-black text-slate-500 mr-4 ml-2">稼働日数</label>
+                    <div class="flex items-center bg-slate-50 rounded-lg px-3 py-1">
+                        <input type="number" id="work-days" value="15" min="1" max="31" class="w-20 text-center text-3xl font-black text-primary border-none focus:outline-none focus:ring-0 p-0 bg-transparent">
+                        <span class="text-slate-500 font-bold ml-1">日</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- インセンティブの仕組み図解 -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-10 mb-8">
+                <h3 class="text-xl font-black text-center mb-8 text-gray-800 border-b-2 border-gray-100 pb-4">
+                    <i class="fas fa-calculator text-primary mr-2"></i>
+                    インセンティブ計算の仕組み
+                </h3>
+
+                <!-- 計算式図解 -->
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
+                    <div class="bg-white border-2 border-slate-200 rounded-xl p-6 text-center shadow-sm w-full md:w-auto">
+                        <div class="text-sm font-bold text-slate-500 mb-1">あなたの実績</div>
+                        <div class="text-2xl font-black text-gray-800">月間粗利</div>
+                    </div>
+                    
+                    <div class="text-3xl text-slate-300 font-black"><i class="fas fa-minus"></i></div>
+                    
+                    <div class="bg-slate-50 border-2 border-slate-200 rounded-xl p-4 text-center shadow-sm w-full md:w-auto">
+                        <div class="text-xs font-bold text-slate-500 mb-1">目標基準額<span class="text-red-500 ml-1">(最大<span id="editable-max-cap" class="editable-rate" contenteditable="true">180</span>万)</span></div>
+                        <div class="text-lg font-bold text-gray-700">稼働日数(<span id="display-work-days" class="text-primary font-black">15</span>日) <i class="fas fa-times text-xs mx-1"></i> <span class="text-xl font-black">10</span>万円</div>
+                        <div class="text-sm font-black text-red-500 mt-1 hidden" id="cap-alert">上限の<span id="display-cap-alert">180</span>万円を適用</div>
+                        <div class="text-[10px] text-slate-400 mt-1" id="cap-note">※画像記載の「稼働日数-10万」の意訳</div>
+                    </div>
+
+                    <div class="text-3xl text-slate-300 font-black"><i class="fas fa-equals"></i></div>
+
+                    <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 text-center relative shadow-md w-full md:w-auto">
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">この額の</div>
+                        <div class="text-4xl font-black text-primary mt-2">5<span class="text-xl">%</span></div>
+                        <div class="text-sm font-bold text-blue-800 mt-1">がインセンティブ！</div>
+                    </div>
+                </div>
+
+                <!-- 計算例 -->
+                <div class="bg-slate-800 text-white rounded-xl p-5 flex items-center shadow-inner">
+                    <div class="bg-slate-700 p-3 rounded-full mr-4 shrink-0">
+                        <i class="fas fa-calendar-check text-blue-400 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold mb-1">【計算例】 稼働<span id="example-days-title">15</span>日・月間粗利300万円の場合</p>
+                        <p class="text-sm font-medium leading-relaxed">
+                            基準額：<span id="example-days">15</span>日 × 10万円 ＝ <span id="example-raw-base">150</span>万円 <span id="example-cap-msg" class="text-red-400 font-bold hidden">→ 上限<span id="display-cap-msg">180</span>万</span><br>
+                            計算式：(300万 － <span id="example-base-2">150</span>万) × <span id="example-rate">5</span>% ＝ <span id="example-incentive" class="text-blue-400 font-bold text-lg">7.5万円</span><br>
+                            👉 <span class="text-white font-bold">総収入は <span id="example-daily-total" class="text-amber-300">日給(1.3万×15日)</span> ＋ <span id="example-incentive-total" class="text-blue-400">7.5万</span> となります！</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- データテーブル -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-10">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+                    <h3 class="text-xl font-black text-gray-800 mb-2 sm:mb-0">
+                        <i class="fas fa-table text-slate-400 mr-2"></i>
+                        報酬シミュレーション早見表
+                    </h3>
+                    <div class="bg-blue-100 text-blue-800 text-sm font-bold px-4 py-2 rounded-full border border-blue-200">
+                        ※稼働 <span id="table-work-days" class="text-lg font-black text-primary">15</span>日 の場合
+                    </div>
+                </div>
+                
+                <div class="table-container overflow-x-auto">
+                    <table class="w-full data-table">
+                        <thead>
+                            <tr>
+                                <th class="w-1/3">月間粗利<br><span class="text-xs text-slate-400 font-normal">（万円）</span></th>
+                                <th class="w-1/3 bg-blue-50 text-blue-800">インセンティブ<br><span class="text-xs text-blue-600 font-normal">（万円）</span></th>
+                                <th class="w-1/3">歩合率</th>
+                            </tr>
+                        </thead>
+                        <tbody id="freelance-table-body">
+                            <!-- JSで動的に生成されます -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-right text-gray-500 mt-3">※「歩合率」の数字をタップすると、シミュレーション用に数値を変更できます。</p>
+            </div>
+        </div>
+        
+    </main>
+
+    <!-- フッター -->
+    <footer class="mt-16 text-center text-slate-400 text-sm pb-8">
+        <p>※本シミュレーションは目安であり、実際の支給額を保証するものではありません。</p>
+    </footer>
+
+    <script>
+        function switchTab(tabId) {
+            // 要素の取得
+            const tabEmployee = document.getElementById('tab-employee');
+            const tabFreelance = document.getElementById('tab-freelance');
+            const btnEmployee = document.getElementById('btn-employee');
+            const btnFreelance = document.getElementById('btn-freelance');
+
+            // 一旦両方隠す・非アクティブ化
+            tabEmployee.classList.add('hidden');
+            tabFreelance.classList.add('hidden');
+            
+            // 従業員ボタンのリセット
+            btnEmployee.className = "flex-1 bg-white text-slate-500 shadow-md border border-slate-200 py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center transition-all duration-300 hover:bg-slate-50";
+            // 業務委託ボタンのリセット
+            btnFreelance.className = "flex-1 bg-white text-slate-500 shadow-md border border-slate-200 py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center transition-all duration-300 hover:bg-slate-50";
+
+            // 選択されたタブを表示・アクティブ化
+            if (tabId === 'employee') {
+                tabEmployee.classList.remove('hidden');
+                btnEmployee.className = "flex-1 bg-secondary text-white shadow-xl py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1";
+            } else {
+                tabFreelance.classList.remove('hidden');
+                btnFreelance.className = "flex-1 bg-primary text-white shadow-xl py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1";
+            }
+        }
+
+        // --- 状態管理 ---
+        const grossProfitsList = [100, 150, 180, 200, 250, 275, 300, 350, 400, 450, 500, 800];
+        
+        const employeeRates = {
+            200: 10, 250: 10, 275: 10, 300: 10, 350: 10, 400: 10, 450: 10, 500: 10, 800: 10
+        };
+
+        const freelanceRates = {
+            100: 5, 150: 5, 180: 5, 200: 5, 250: 5, 275: 5, 300: 5, 350: 5, 400: 5, 450: 5, 500: 5, 800: 5
+        };
+
+        let currentMaxCap = 180;
+
+        // --- 従業員タブの描画 ---
+        function renderEmployeeTable() {
+            const tbody = document.getElementById('employee-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            grossProfitsList.forEach(profit => {
+                const tr = document.createElement('tr');
+                if (profit === 180) tr.className = 'bg-yellow-50/50 font-bold';
+                else if (profit === 200) tr.className = 'bg-yellow-50 font-bold';
+                else if (profit === 800) tr.className = 'bg-green-50/50';
+
+                let incentive = 0;
+                let rateHtml = '';
+                let bonusInfo = '';
+
+                if (profit < 180) {
+                    incentive = 0;
+                    rateHtml = '<td class="text-slate-400">-</td>';
+                    bonusInfo = '-';
+                } else if (profit === 180) {
+                    incentive = 3;
+                    rateHtml = '<td class="text-slate-400 text-sm">発生</td>';
+                    bonusInfo = '3万';
+                } else {
+                    let rate = employeeRates[profit];
+                    let totalBonus = 10; // 3万 + 7万
+                    incentive = (profit - 180) * (rate / 100) + totalBonus;
+                    incentive = Math.round(incentive * 100) / 100;
+                    rateHtml = `<td><span class="editable-rate" contenteditable="true" data-type="employee" data-profit="${profit}">${rate}</span>%</td>`;
+                    if (profit === 200) {
+                        bonusInfo = '7万';
+                    }
+                }
+
+                let profitHtml = profit === 800 ? `<td class="font-black text-lg">${profit}</td>` : `<td>${profit}</td>`;
+                let incentiveClass = profit >= 180 ? 'highlight-cell text-secondary' : 'text-slate-400';
+                if (profit === 800) incentiveClass += ' text-2xl';
+                
+                let incentiveHtml = `<td class="${incentiveClass}" id="emp-inc-${profit}">${incentive > 0 ? incentive : 0}</td>`;
+                let bonusHtml = `<td class="text-accent font-black">${bonusInfo}</td>`;
+
+                tr.innerHTML = profitHtml + incentiveHtml + rateHtml + bonusHtml;
+                tbody.appendChild(tr);
+            });
+            updateEmployeeExample();
+        }
+
+        function updateEmployeeRow(profit) {
+            if (profit < 180) return;
+            let rate = employeeRates[profit] || 0;
+            let totalBonus = 10;
+            let incentive = (profit - 180) * (rate / 100) + totalBonus;
+            incentive = Math.round(incentive * 100) / 100;
+            const cell = document.getElementById(`emp-inc-${profit}`);
+            if (cell) cell.textContent = incentive > 0 ? incentive : 0;
+            
+            if (profit === 300) {
+                updateEmployeeExample();
+            }
+        }
+
+        function updateEmployeeExample() {
+            let rate = employeeRates[300] || 0;
+            let incentive = (300 - 180) * (rate / 100); 
+            let total = incentive + 10; 
+            incentive = Math.round(incentive * 100) / 100;
+            total = Math.round(total * 100) / 100;
+            
+            const elRate = document.getElementById('emp-example-rate');
+            const elInc = document.getElementById('emp-example-inc');
+            const elTotal = document.getElementById('emp-example-total');
+            if (elRate) elRate.textContent = rate;
+            if (elInc) elInc.textContent = incentive;
+            if (elTotal) elTotal.textContent = total;
+        }
+
+        // --- 業務委託タブの描画・更新 ---
+        // 稼働日数が変わった時に全体を再描画する
+        function updateFreelanceCalc() {
+            const workDaysInput = document.getElementById('work-days');
+            if (!workDaysInput) return;
+
+            let days = parseInt(workDaysInput.value);
+            if (isNaN(days) || days < 0) days = 0;
+
+            let rawBaseAmount = days * 10; // 万円
+            const baseAmount = Math.min(rawBaseAmount, currentMaxCap); // 上限を動的に設定
+
+            // 図解の更新
+            document.getElementById('display-work-days').textContent = days;
+            
+            const capAlert = document.getElementById('cap-alert');
+            const capNote = document.getElementById('cap-note');
+            if (rawBaseAmount > currentMaxCap) {
+                capAlert.classList.remove('hidden');
+                capNote.classList.add('hidden');
+            } else {
+                capAlert.classList.add('hidden');
+                capNote.classList.remove('hidden');
+            }
+
+            // 計算例の更新 (粗利300万の例)
+            document.getElementById('example-days-title').textContent = days;
+            document.getElementById('example-days').textContent = days;
+            document.getElementById('example-raw-base').textContent = rawBaseAmount;
+            
+            const capMsg = document.getElementById('example-cap-msg');
+            if (rawBaseAmount > currentMaxCap) {
+                capMsg.classList.remove('hidden');
+            } else {
+                capMsg.classList.add('hidden');
+            }
+
+            document.getElementById('example-base-2').textContent = baseAmount;
+            
+            let rate300 = freelanceRates[300] || 0;
+            let exampleIncentive = (300 - baseAmount) * (rate300 / 100);
+            if (exampleIncentive < 0) exampleIncentive = 0;
+            exampleIncentive = Math.round(exampleIncentive * 100) / 100;
+            
+            document.getElementById('example-rate').textContent = rate300;
+            document.getElementById('example-incentive').textContent = exampleIncentive + '万円';
+            document.getElementById('example-incentive-total').textContent = exampleIncentive + '万';
+            document.getElementById('example-daily-total').textContent = '日給(1.3万×' + days + '日)';
+
+            // 表の更新
+            document.getElementById('table-work-days').textContent = days;
+            const tbody = document.getElementById('freelance-table-body');
+            tbody.innerHTML = ''; // クリア
+            
+            grossProfitsList.forEach(profit => {
+                let rate = freelanceRates[profit];
+                let incentive = (profit - baseAmount) * (rate / 100);
+                if (incentive < 0) incentive = 0;
+                incentive = Math.round(incentive * 100) / 100; // 小数第2位まで
+                
+                const tr = document.createElement('tr');
+                if (profit === 800) tr.className = 'bg-blue-50/50';
+
+                let profitHtml = profit === 800 ? `<td class="font-black text-lg">${profit}</td>` : `<td>${profit}</td>`;
+                let incentiveClass = incentive > 0 ? 'highlight-cell text-primary' : 'text-slate-400';
+                if (profit === 800) incentiveClass += ' text-2xl';
+                let incentiveHtml = `<td class="${incentiveClass}" id="free-inc-${profit}">${incentive > 0 ? incentive : 0}</td>`;
+                
+                let rateHtml = `<td class="${incentive > 0 ? '' : 'text-slate-400'}"><span class="editable-rate" contenteditable="true" data-type="freelance" data-profit="${profit}">${rate}</span>%</td>`;
+                
+                tr.innerHTML = profitHtml + incentiveHtml + rateHtml;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 歩合率のみが変わった時に該当行だけを更新する
+        function updateFreelanceRow(profit) {
+            const workDaysInput = document.getElementById('work-days');
+            let days = parseInt(workDaysInput.value);
+            if (isNaN(days) || days < 0) days = 0;
+            const baseAmount = Math.min(days * 10, currentMaxCap);
+            
+            let rate = freelanceRates[profit] || 0;
+            let incentive = (profit - baseAmount) * (rate / 100);
+            if (incentive < 0) incentive = 0;
+            incentive = Math.round(incentive * 100) / 100;
+            
+            const cell = document.getElementById(`free-inc-${profit}`);
+            if (cell) {
+                cell.textContent = incentive > 0 ? incentive : 0;
+                if (incentive > 0) {
+                    cell.className = profit === 800 ? "highlight-cell text-primary text-2xl" : "highlight-cell text-primary";
+                } else {
+                    cell.className = "text-slate-400";
+                }
+            }
+
+            if (profit === 300) {
+                // 300万の行が変わったら計算例も更新する
+                let exampleIncentive = (300 - baseAmount) * (rate / 100);
+                if (exampleIncentive < 0) exampleIncentive = 0;
+                exampleIncentive = Math.round(exampleIncentive * 100) / 100;
+                document.getElementById('example-rate').textContent = rate;
+                document.getElementById('example-incentive').textContent = exampleIncentive + '万円';
+                document.getElementById('example-incentive-total').textContent = exampleIncentive + '万';
+            }
+        }
+
+        // --- イベントリスナー ---
+        // テキスト入力検知
+        document.addEventListener('input', function(e) {
+            if (e.target.id === 'editable-max-cap') {
+                let text = e.target.textContent;
+                let val = parseFloat(text);
+                if (isNaN(val)) val = 0;
+                currentMaxCap = val;
+                
+                // 他の表示用キャップ金額も連動させる
+                document.getElementById('display-cap-alert').textContent = currentMaxCap;
+                document.getElementById('display-cap-msg').textContent = currentMaxCap;
+                
+                updateFreelanceCalc();
+            } else if (e.target.classList.contains('editable-rate')) {
+                let text = e.target.textContent;
+                let val = parseFloat(text);
+                if (isNaN(val)) val = 0;
+                
+                const type = e.target.dataset.type;
+                const profit = parseInt(e.target.dataset.profit);
+
+                if (type === 'employee') {
+                    employeeRates[profit] = val;
+                    updateEmployeeRow(profit);
+                } else if (type === 'freelance') {
+                    freelanceRates[profit] = val;
+                    updateFreelanceRow(profit);
+                }
+            }
+        });
+
+        // エンターキーでの改行を防止し、フォーカスを外す
+        document.addEventListener('keydown', function(e) {
+            if (e.target.classList.contains('editable-rate')) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.target.blur();
+                }
+            }
+        });
+
+        // DOM読み込み完了時に初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            renderEmployeeTable();
+            const workDaysInput = document.getElementById('work-days');
+            if (workDaysInput) {
+                workDaysInput.addEventListener('input', updateFreelanceCalc);
+                updateFreelanceCalc(); // 初期描画
+            }
+        });
+    </script>
+</body>
+</html>
