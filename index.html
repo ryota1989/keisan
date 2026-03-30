@@ -202,12 +202,16 @@
                         <div class="block md:hidden text-secondary text-3xl mt-3 opacity-50"><i class="fas fa-angle-double-down"></i></div>
                     </div>
 
-                    <div class="bg-gradient-to-br from-secondary to-emerald-500 rounded-xl p-5 flex-1 text-center text-white shadow-lg transform md:-translate-y-4 flex flex-col justify-center">
-                        <div class="text-xs font-black text-emerald-100 mb-2 tracking-widest">STEP 3</div>
-                        <div class="text-lg font-bold mb-2">青天井の歩合報酬</div>
-                        <p class="text-xs text-emerald-100 mb-3">(粗利 － 180万円) の</p>
+                    <div class="bg-gradient-to-br from-secondary to-emerald-500 rounded-xl p-5 flex-1 text-center text-white shadow-lg transform md:-translate-y-4 flex flex-col justify-center relative">
+                        <div class="text-xs font-black text-emerald-100 mb-1 tracking-widest">STEP 3</div>
+                        <div class="text-lg font-bold mb-3 border-b border-emerald-400 pb-2">青天井の歩合報酬</div>
+                        <div class="bg-white/10 rounded-lg p-2 mb-2">
+                            <p class="text-xs text-emerald-100">180万円を<span class="text-yellow-300 font-bold text-sm mx-1">超えた分</span>の粗利</p>
+                            <p class="text-[10px] text-emerald-200 mt-1">※(実際の粗利 － 180万円)</p>
+                        </div>
+                        <p class="text-xs text-emerald-100 mb-1">に対して</p>
                         <div class="text-4xl font-black text-white mb-1"><span class="text-xl">常に</span> 10%</div>
-                        <p class="text-xs font-medium bg-white/20 py-1 px-2 rounded-lg inline-block mx-auto">が無限に加算！</p>
+                        <p class="text-xs font-medium bg-white/20 py-1 px-2 rounded-lg inline-block mx-auto mt-1">が無限に加算！</p>
                     </div>
                 </div>
 
@@ -219,9 +223,9 @@
                     <div>
                         <p class="text-xs text-slate-400 font-bold mb-1">【計算例】 月間粗利300万円の場合</p>
                         <p class="text-sm font-medium leading-relaxed">
-                            200万達成ボーナス <span class="text-accent font-bold">10万円</span> (※3万+7万)<br class="md:hidden">
-                            ＋ (300万 - 180万) × <span id="emp-example-rate">10</span>% = <span class="text-emerald-400 font-bold"><span id="emp-example-inc">12</span>万円</span><br>
-                            👉 <span class="text-white font-bold">合計 <span class="text-xl text-accent"><span id="emp-example-total">22</span>万円</span> のインセンティブを獲得！</span>
+                            ① 達成ボーナス： <span class="text-accent font-bold">10万円</span> <span class="text-xs text-slate-400">(※3万+7万)</span><br>
+                            ② 超過分の歩合： <span class="text-slate-300 text-xs">180万を超えた分(300万 - 180万)</span> × <span id="emp-example-rate" class="text-base">10</span>% = <span class="text-emerald-400 font-bold text-lg"><span id="emp-example-inc">12</span>万円</span><br>
+                            👉 <span class="text-white font-bold mt-2 inline-block">総収入は <span class="text-amber-300">基本給(25万〜)</span> ＋ インセンティブ合計<span class="text-xl text-accent ml-1"><span id="emp-example-total">22</span>万円</span>！</span>
                         </p>
                     </div>
                 </div>
@@ -341,7 +345,7 @@
                         <p class="text-sm font-medium leading-relaxed">
                             基準額：<span id="example-days">15</span>日 × 10万円 ＝ <span id="example-raw-base">150</span>万円 <span id="example-cap-msg" class="text-red-400 font-bold hidden">→ 上限<span id="display-cap-msg">180</span>万</span><br>
                             計算式：(300万 － <span id="example-base-2">150</span>万) × <span id="example-rate">5</span>% ＝ <span id="example-incentive" class="text-blue-400 font-bold text-lg">7.5万円</span><br>
-                            👉 <span class="text-white font-bold">総収入は <span id="example-daily-total" class="text-amber-300">日給(1.3万×15日)</span> ＋ <span id="example-incentive-total" class="text-blue-400">7.5万</span> となります！</span>
+                            👉 <span class="text-white font-bold mt-2 inline-block">総収入は <span id="example-daily-total" class="text-amber-300">日給19.5万円(1.3万×15日)</span> ＋ インセン<span id="example-incentive-total" class="text-blue-400 ml-1">7.5万</span> ＝ <span class="text-xl text-accent ml-1"><span id="example-grand-total">27</span>万円</span>！</span>
                         </p>
                     </div>
                 </div>
@@ -363,9 +367,10 @@
                     <table class="w-full data-table">
                         <thead>
                             <tr>
-                                <th class="w-1/3">月間粗利<br><span class="text-xs text-slate-400 font-normal">（万円）</span></th>
-                                <th class="w-1/3 bg-blue-50 text-blue-800">インセンティブ<br><span class="text-xs text-blue-600 font-normal">（万円）</span></th>
-                                <th class="w-1/3">歩合率</th>
+                                <th class="w-1/4">月間粗利<br><span class="text-xs text-slate-400 font-normal">（万円）</span></th>
+                                <th class="w-1/4">歩合率</th>
+                                <th class="w-1/4 bg-blue-50 text-blue-800">インセン<br><span class="text-xs text-blue-600 font-normal">（万円）</span></th>
+                                <th class="w-1/4 bg-amber-50 text-amber-800">総収入<br><span class="text-xs text-amber-600 font-normal">（万円）</span></th>
                             </tr>
                         </thead>
                         <tbody id="freelance-table-body">
@@ -545,10 +550,16 @@
             if (exampleIncentive < 0) exampleIncentive = 0;
             exampleIncentive = Math.round(exampleIncentive * 100) / 100;
             
+            let dailyWageTotal = days * 1.3;
+            dailyWageTotal = Math.round(dailyWageTotal * 10) / 10;
+            let exampleGrandTotal = dailyWageTotal + exampleIncentive;
+            exampleGrandTotal = Math.round(exampleGrandTotal * 100) / 100;
+            
             document.getElementById('example-rate').textContent = rate300;
             document.getElementById('example-incentive').textContent = exampleIncentive + '万円';
             document.getElementById('example-incentive-total').textContent = exampleIncentive + '万';
-            document.getElementById('example-daily-total').textContent = '日給(1.3万×' + days + '日)';
+            document.getElementById('example-daily-total').textContent = `日給${dailyWageTotal}万円(1.3万×${days}日)`;
+            document.getElementById('example-grand-total').textContent = exampleGrandTotal;
 
             // 表の更新
             document.getElementById('table-work-days').textContent = days;
@@ -561,17 +572,23 @@
                 if (incentive < 0) incentive = 0;
                 incentive = Math.round(incentive * 100) / 100; // 小数第2位まで
                 
+                let grandTotal = dailyWageTotal + incentive;
+                grandTotal = Math.round(grandTotal * 100) / 100;
+                
                 const tr = document.createElement('tr');
                 if (profit === 800) tr.className = 'bg-blue-50/50';
 
                 let profitHtml = profit === 800 ? `<td class="font-black text-lg">${profit}</td>` : `<td>${profit}</td>`;
-                let incentiveClass = incentive > 0 ? 'highlight-cell text-primary' : 'text-slate-400';
-                if (profit === 800) incentiveClass += ' text-2xl';
-                let incentiveHtml = `<td class="${incentiveClass}" id="free-inc-${profit}">${incentive > 0 ? incentive : 0}</td>`;
-                
                 let rateHtml = `<td class="${incentive > 0 ? '' : 'text-slate-400'}"><span class="editable-rate" contenteditable="true" data-type="freelance" data-profit="${profit}">${rate}</span>%</td>`;
                 
-                tr.innerHTML = profitHtml + incentiveHtml + rateHtml;
+                let incentiveClass = incentive > 0 ? 'highlight-cell text-primary' : 'text-slate-400';
+                if (profit === 800) incentiveClass += ' text-xl';
+                let incentiveHtml = `<td class="${incentiveClass}" id="free-inc-${profit}">${incentive > 0 ? incentive : 0}</td>`;
+                
+                let totalClass = profit === 800 ? 'highlight-cell text-amber-600 text-2xl font-black' : 'highlight-cell text-amber-600';
+                let totalHtml = `<td class="${totalClass}" id="free-total-${profit}">${grandTotal}</td>`;
+                
+                tr.innerHTML = profitHtml + rateHtml + incentiveHtml + totalHtml;
                 tbody.appendChild(tr);
             });
         }
@@ -583,19 +600,30 @@
             if (isNaN(days) || days < 0) days = 0;
             const baseAmount = Math.min(days * 10, currentMaxCap);
             
+            let dailyWageTotal = days * 1.3;
+            dailyWageTotal = Math.round(dailyWageTotal * 10) / 10;
+            
             let rate = freelanceRates[profit] || 0;
             let incentive = (profit - baseAmount) * (rate / 100);
             if (incentive < 0) incentive = 0;
             incentive = Math.round(incentive * 100) / 100;
             
+            let grandTotal = dailyWageTotal + incentive;
+            grandTotal = Math.round(grandTotal * 100) / 100;
+            
             const cell = document.getElementById(`free-inc-${profit}`);
             if (cell) {
                 cell.textContent = incentive > 0 ? incentive : 0;
                 if (incentive > 0) {
-                    cell.className = profit === 800 ? "highlight-cell text-primary text-2xl" : "highlight-cell text-primary";
+                    cell.className = profit === 800 ? "highlight-cell text-primary text-xl" : "highlight-cell text-primary";
                 } else {
                     cell.className = "text-slate-400";
                 }
+            }
+            
+            const totalCell = document.getElementById(`free-total-${profit}`);
+            if (totalCell) {
+                totalCell.textContent = grandTotal;
             }
 
             if (profit === 300) {
@@ -603,9 +631,14 @@
                 let exampleIncentive = (300 - baseAmount) * (rate / 100);
                 if (exampleIncentive < 0) exampleIncentive = 0;
                 exampleIncentive = Math.round(exampleIncentive * 100) / 100;
+                
+                let exampleGrandTotal = dailyWageTotal + exampleIncentive;
+                exampleGrandTotal = Math.round(exampleGrandTotal * 100) / 100;
+                
                 document.getElementById('example-rate').textContent = rate;
                 document.getElementById('example-incentive').textContent = exampleIncentive + '万円';
                 document.getElementById('example-incentive-total').textContent = exampleIncentive + '万';
+                document.getElementById('example-grand-total').textContent = exampleGrandTotal;
             }
         }
 
