@@ -311,9 +311,18 @@
 
                 <!-- 計算式図解 -->
                 <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
-                    <div class="bg-white border-2 border-slate-200 rounded-xl p-6 text-center shadow-sm w-full md:w-auto">
+                    <div class="bg-white border-2 border-slate-200 rounded-xl p-5 text-center shadow-sm w-full md:w-auto flex flex-col items-center">
                         <div class="text-sm font-bold text-slate-500 mb-1">あなたの実績</div>
-                        <div class="text-2xl font-black text-gray-800">月間粗利</div>
+                        <div class="text-2xl font-black text-gray-800 mb-3">月間粗利</div>
+                        
+                        <div class="bg-slate-50 rounded-lg p-1 border border-slate-200 flex items-center w-full justify-between">
+                            <button onclick="changeExampleProfit(-10)" class="w-8 h-8 rounded-md bg-white shadow-sm text-slate-400 hover:text-primary hover:bg-blue-50 flex items-center justify-center transition-colors"><i class="fas fa-minus text-xs"></i></button>
+                            <div class="flex items-baseline mx-2">
+                                <span id="interactive-example-profit" class="text-2xl font-black text-primary">300</span>
+                                <span class="text-xs font-bold text-slate-500 ml-1">万円</span>
+                            </div>
+                            <button onclick="changeExampleProfit(10)" class="w-8 h-8 rounded-md bg-white shadow-sm text-slate-400 hover:text-primary hover:bg-blue-50 flex items-center justify-center transition-colors"><i class="fas fa-plus text-xs"></i></button>
+                        </div>
                     </div>
                     
                     <div class="text-3xl text-slate-300 font-black"><i class="fas fa-minus"></i></div>
@@ -321,6 +330,7 @@
                     <div class="bg-slate-50 border-2 border-slate-200 rounded-xl p-4 text-center shadow-sm w-full md:w-auto">
                         <div class="text-xs font-bold text-slate-500 mb-1">目標基準額<span class="text-red-500 ml-1">(最大<span id="editable-max-cap" class="editable-rate" contenteditable="true">180</span>万)</span></div>
                         <div class="text-lg font-bold text-gray-700">稼働日数(<span id="display-work-days" class="text-primary font-black">15</span>日) <i class="fas fa-times text-xs mx-1"></i> <span class="text-xl font-black">10</span>万円</div>
+                        <div class="text-2xl font-black text-slate-700 mt-1 border-t border-slate-200 pt-1 border-dashed">＝ <span id="display-raw-base" class="text-3xl text-slate-800">150</span>万円</div>
                         <div class="text-sm font-black text-red-500 mt-1 hidden" id="cap-alert">上限の<span id="display-cap-alert">180</span>万円を適用</div>
                         <div class="text-[10px] text-slate-400 mt-1" id="cap-note">※画像記載の「稼働日数-10万」の意訳</div>
                     </div>
@@ -340,10 +350,10 @@
                         <i class="fas fa-calendar-check text-blue-400 text-xl"></i>
                     </div>
                     <div>
-                        <p class="text-xs text-slate-400 font-bold mb-1">【計算例】 稼働<span id="example-days-title">15</span>日・月間粗利300万円の場合</p>
+                        <p class="text-xs text-slate-400 font-bold mb-1">【計算例】 稼働<span id="example-days-title">15</span>日・月間粗利<span id="example-profit-title">300</span>万円の場合</p>
                         <p class="text-sm font-medium leading-relaxed">
                             基準額：<span id="example-days">15</span>日 × 10万円 ＝ <span id="example-raw-base">150</span>万円 <span id="example-cap-msg" class="text-red-400 font-bold hidden">→ 上限<span id="display-cap-msg">180</span>万</span><br>
-                            計算式：(300万 － <span id="example-base-2">150</span>万) × <span id="example-rate">5</span>% ＝ <span id="example-incentive" class="text-blue-400 font-bold text-lg">7.5万円</span><br>
+                            計算式：(<span id="example-profit-calc">300</span>万 － <span id="example-base-2">150</span>万) × <span id="example-rate">5</span>% ＝ <span id="example-incentive" class="text-blue-400 font-bold text-lg">7.5万円</span><br>
                             👉 <span class="text-white font-bold mt-2 inline-block">総収入は <span id="example-daily-total" class="text-amber-300">日給19.5万円(1.3万×15日)</span> ＋ インセン<span id="example-incentive-total" class="text-blue-400 ml-1">7.5万</span> ＝ <span class="text-xl text-accent ml-1"><span id="example-grand-total">27</span>万円</span>！</span>
                         </p>
                     </div>
@@ -427,6 +437,14 @@
 
         let currentMaxCap = 180;
         let currentDailyWage = 1.3;
+        let currentExampleProfit = 300;
+
+        function changeExampleProfit(delta) {
+            currentExampleProfit += delta;
+            if (currentExampleProfit < 0) currentExampleProfit = 0;
+            document.getElementById('interactive-example-profit').textContent = currentExampleProfit;
+            updateFreelanceCalc();
+        }
 
         // --- 従業員タブの描画 ---
         function renderEmployeeTable() {
@@ -520,6 +538,9 @@
             // 図解の更新
             document.getElementById('display-work-days').textContent = days;
             
+            const displayRawBase = document.getElementById('display-raw-base');
+            if(displayRawBase) displayRawBase.textContent = rawBaseAmount;
+
             const capAlert = document.getElementById('cap-alert');
             const capNote = document.getElementById('cap-note');
             if (rawBaseAmount > currentMaxCap) {
@@ -544,8 +565,15 @@
 
             document.getElementById('example-base-2').textContent = baseAmount;
             
-            let rate300 = freelanceRates[300] || 0;
-            let exampleIncentive = (300 - baseAmount) * (rate300 / 100);
+            const titleProfit = document.getElementById('example-profit-title');
+            if (titleProfit) titleProfit.textContent = currentExampleProfit;
+            const calcProfit = document.getElementById('example-profit-calc');
+            if (calcProfit) calcProfit.textContent = currentExampleProfit;
+            
+            let currentRate = freelanceRates[currentExampleProfit];
+            if (currentRate === undefined) currentRate = freelanceRates[300] || 5;
+
+            let exampleIncentive = (currentExampleProfit - baseAmount) * (currentRate / 100);
             if (exampleIncentive < 0) exampleIncentive = 0;
             exampleIncentive = Math.round(exampleIncentive * 100) / 100;
             
@@ -554,7 +582,7 @@
             let exampleGrandTotal = dailyWageTotal + exampleIncentive;
             exampleGrandTotal = Math.round(exampleGrandTotal * 100) / 100;
             
-            document.getElementById('example-rate').textContent = rate300;
+            document.getElementById('example-rate').textContent = currentRate;
             document.getElementById('example-incentive').textContent = exampleIncentive + '万円';
             document.getElementById('example-incentive-total').textContent = exampleIncentive + '万';
             document.getElementById('example-daily-total').textContent = `日給${dailyWageTotal}万円(${currentDailyWage}万×${days}日)`;
@@ -625,20 +653,20 @@
                 totalCell.textContent = grandTotal;
             }
 
-            if (profit === 300) {
-                // 300万の行が変わったら計算例も更新する
-                let exampleIncentive = (300 - baseAmount) * (rate / 100);
-                if (exampleIncentive < 0) exampleIncentive = 0;
-                exampleIncentive = Math.round(exampleIncentive * 100) / 100;
-                
-                let exampleGrandTotal = dailyWageTotal + exampleIncentive;
-                exampleGrandTotal = Math.round(exampleGrandTotal * 100) / 100;
-                
-                document.getElementById('example-rate').textContent = rate;
-                document.getElementById('example-incentive').textContent = exampleIncentive + '万円';
-                document.getElementById('example-incentive-total').textContent = exampleIncentive + '万';
-                document.getElementById('example-grand-total').textContent = exampleGrandTotal;
-            }
+            let currentRate = freelanceRates[currentExampleProfit];
+            if (currentRate === undefined) currentRate = freelanceRates[300] || 5;
+
+            let exampleIncentive = (currentExampleProfit - baseAmount) * (currentRate / 100);
+            if (exampleIncentive < 0) exampleIncentive = 0;
+            exampleIncentive = Math.round(exampleIncentive * 100) / 100;
+            
+            let exampleGrandTotal = dailyWageTotal + exampleIncentive;
+            exampleGrandTotal = Math.round(exampleGrandTotal * 100) / 100;
+            
+            document.getElementById('example-rate').textContent = currentRate;
+            document.getElementById('example-incentive').textContent = exampleIncentive + '万円';
+            document.getElementById('example-incentive-total').textContent = exampleIncentive + '万';
+            document.getElementById('example-grand-total').textContent = exampleGrandTotal;
         }
 
         // --- イベントリスナー ---
